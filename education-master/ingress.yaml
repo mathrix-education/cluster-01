@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: api-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    #nginx.ingress.kubernetes.io/backend-protocol: "FCGI"
+    #nginx.ingress.kubernetes.io/fastcgi-index: "index.php"
+spec:
+  rules:
+    - host: k8s.mathrix.fr
+      http:
+        paths:
+          - backend:
+              serviceName: api-service
+              servicePort: 8080
