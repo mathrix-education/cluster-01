@@ -1,36 +1,8 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nginx-vhost
-data:
-  default.conf: |-
-    server {
-      listen 80 default_server;
-      server_name  _;
-      
-      index index.php;
-      root /var/www/html;
-      
-      location / {
-        try_files $uri $uri/ /index.php?$args;
-      }
-
-      location ~ \.php$ {
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_index index.php;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_intercept_errors off;
-        fastcgi_buffer_size 16k;
-        fastcgi_buffers 4 16k;
-      }
-    }
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api
+  namespace: education-graphql
   labels:
     app: api
 spec:
@@ -47,25 +19,13 @@ spec:
         app: api
     spec:
       containers:
-        - image: eu.gcr.io/mathrix-education/phpinfo:latest
+        - image: eu.gcr.io/mathrix-education/education-api:7.0.0-719ad3f
           imagePullPolicy: Always
           name: php
-          ports:
-            - containerPort: 9000
-        - image: nginx:1.17-alpine
-          imagePullPolicy: Always
-          name: nginx
-          volumeMounts:
-            - mountPath: /etc/nginx/conf.d
-              name: nginx-vhost-conf
-              readOnly: true
-          ports:
-            - containerPort: 80
-      volumes:
-        - name: nginx-vhost-conf
-          configMap:
-            defaultMode: 256
-            name: nginx-vhost
-            optional: false
+          env:
+          - name: APP_ENV
+            value: v7
+
+
           
               
