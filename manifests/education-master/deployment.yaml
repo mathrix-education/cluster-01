@@ -25,7 +25,15 @@ spec:
           env:
           - name: APP_ENV
             value: v7
-
-
+          envFrom:
+          - configMapRef:
+              name: env-configmap
+          volumeMounts:
+          - name: keychain-volume
+            mountPath: /var/www/storage/keychain
+      volumes:
+        - name: keychain-volume
+          configMap:
+            name: keys
           
               
